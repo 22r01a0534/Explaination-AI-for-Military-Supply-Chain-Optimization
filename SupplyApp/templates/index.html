@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tactical Dashboard - Supply Chain</title>
+	<link href="{% static 'default.css' %}?v=3.2" rel="stylesheet" type="text/css" />
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+	<style>
+		.lime-explanation {
+			border: 1px solid #444;
+			padding: 10px;
+			background: #000;
+			border-radius: 4px;
+			margin-top: 15px;
+		}
+
+		.lime-explanation img {
+			max-width: 100%;
+			height: auto;
+		}
+
+		.mission-badge {
+			background: var(--primary-color);
+			color: white;
+			padding: 4px 8px;
+			border-radius: 4px;
+			font-size: 0.8rem;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<nav class="navbar">
+		<div class="container">
+			<div class="logo"><span style="color:var(--accent-color)">MILITARY</span> LOGISTICS</div>
+			<ul class="nav-links">
+				<li><a href="{% url 'index' %}" class="active">Tactical Dashboard</a></li>
+				<li><a href="{% url 'Optimize' %}">New Mission</a></li>
+				<li><a href="{% url 'history' %}">History</a></li>
+				<li><a href="{% url 'literature' %}">Literature Survey</a></li>
+			</ul>
+		</div>
+	</nav>
+
+	<div class="main-container dashboard">
+
+		<div class="header-section" style="display:flex; justify-content:space-between; align-items:center;">
+			<div>
+				<h1>Mission Analysis Dashboard</h1>
+				<p>Terrain Classification & Optimal Route Planning</p>
+			</div>
+			{% if mission_type %}
+			<div>
+				<span class="mission-badge">Profile: {{ mission_type }}</span>
+				{% if ranked_personnel %}
+				<span class="mission-badge" style="background:var(--accent-color); margin-left:10px;">Cmdr: {{
+					ranked_personnel }}</span>
+				{% endif %}
+			</div>
+			{% endif %}
+		</div>
+
+		{% if data or img %}
+		<div class="results-grid">
+			<div class="card result-card">
+				<div class="card-header">
+					<h3>Tactical Map Overlay</h3>
+				</div>
+				<div class="card-body image-container">
+					{% if img %}
+					<img src="data:image/png;base64, {{ img }}" alt="Analyzed Route" class="analysis-image" />
+					{% else %}
+					<div class="placeholder-box">
+						<p>No analysis image available.</p>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+
+			<div class="card status-card">
+				<div class="card-header">
+					<h3>Mission Status</h3>
+				</div>
+				<div class="card-body">
+					{% if data %}
+					<div class="status-box">
+						<p class="status-text">{{ data }}</p>
+					</div>
+					{% else %}
+					<p>Waiting for input...</p>
+					<a href="{% url 'Optimize' %}" class="btn btn-primary">Start New Mission</a>
+					{% endif %}
+
+					{% if path_objects %}
+					<div class="objects-list" style="margin-bottom: 2rem;">
+						<h4>Objects on Route</h4>
+						<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+							{% for obj in path_objects %}
+							<span
+								style="background: #333; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">{{
+								obj|title }}</span>
+							{% endfor %}
+						</div>
+					</div>
+					{% endif %}
+
+					<div class="legend">
+						<h4>Map Legend</h4>
+						<ul>
+							<li><span class="dot safe"></span> Safe (Low Cost)</li>
+							<li><span class="dot risky"></span> Moderate Risk (High Cost)</li>
+							<li><span class="dot unsafe"></span> Hostile/Impassable (Avoided)</li>
+							<li><span class="line path"></span> Optimal Supply Route</li>
+						</ul>
+					</div>
+
+					{% if lime_img %}
+					<div class="lime-explanation">
+						<h4>AI Safety Analysis</h4>
+						<p style="margin-bottom: 1rem; color: #ccc;">{{ safety_explanation|safe }}</p>
+
+						<h5 style="color:#aaa; border-top:1px solid #444; padding-top:10px;">Critical Patch Analysis
+							(XAI)</h5>
+						<p style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">
+							LIME explanation for most significant terrain feature:
+						</p>
+						<img src="data:image/png;base64, {{ lime_img }}" alt="LIME Explanation" />
+					</div>
+					{% endif %}
+
+					{% if all_objects %}
+					<div style="margin-top: 2rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 4px;">
+						<h4 style="margin-top:0;">Global Terrain Scan</h4>
+						<p style="font-size: 0.9rem; color: #bbb;">Objects/Terrains detected in full sector:</p>
+						<div style="display: flex; flex-wrap: wrap; gap: 8px;">
+							{% for obj in all_objects %}
+							<span
+								style="background: #333; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">{{
+								obj|title }}</span>
+							{% endfor %}
+						</div>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	{% else %}
+
+	<div class="hero-section">
+		<h2>Military Supply Chain Optimization System</h2>
+		<p>Advanced AI-driven terrain analysis for logistics in hostile environments.</p>
+
+		<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 2rem;">
+			<div style="text-align: left;">
+				<h4>Key Capabilities:</h4>
+				<ul>
+					<li><span style="color:var(--success)">✔</span> SAR Image Terrain Segmentation</li>
+					<li><span style="color:var(--success)">✔</span> Mission-Adaptable Pathfinding</li>
+					<li><span style="color:var(--success)">✔</span> Dynamic Risk Avoidance</li>
+					<li><span style="color:var(--success)">✔</span> Explainable AI (XAI) Integration</li>
+				</ul>
+			</div>
+		</div>
+		<br>
+		<a href="{% url 'Optimize' %}" class="btn btn-large btn-accent">Initialize Mission</a>
+	</div>
+
+	{% endif %}
+
+	</div>
+
+	<footer>
+		<p>SECURE TERMINAL • SYSTEM READY</p>
+	</footer>
+
+</body>
+
+</html>

@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Route Points - Tactical Operations</title>
+    <link href="{% static 'default.css' %}?v=3.2" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #121212;
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        #image-container {
+            position: relative;
+            display: inline-block;
+            border: 2px solid #555;
+            cursor: crosshair;
+        }
+
+        .marker {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .marker-start {
+            background-color: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .marker-end {
+            background-color: #ff0000;
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        .instructions {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #222;
+            display: inline-block;
+            border-radius: 8px;
+        }
+
+        .steps {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Mission Coordinate Selection</h2>
+
+        <div class="instructions">
+            <p><strong>INSTRUCTIONS:</strong></p>
+            <p>1. <span class="steps">CLICK LEFT</span> to set Extraction Point (Start - Green)</p>
+            <p>2. <span class="steps">CLICK RIGHT</span> (or second click) to set Objective Point (End - Red)</p>
+            <p id="status-text" style="color: #aaa;">Waiting for Start Point...</p>
+        </div>
+        <br>
+
+        <div id="image-container">
+            <img src="{% static '' %}{{ image_url }}" id="mission-image" alt="Mission Terrain" style="max-width: none;">
+            <!-- Markers will be injected here -->
+        </div>
+
+        <form id="coordForm" action="{% url 'finalize_mission' %}" method="post" style="margin-top: 30px;">
+            {% csrf_token %}
+            <input type="hidden" name="image_path" value="{{ image_path }}">
+            <input type="hidden" name="mission_type" value="{{ mission_type }}">
+            <input type="hidden" name="ranked_personnel" value="{{ ranked_personnel }}">
+
+            <input type="hidden" name="start_x" id="start_x">
+            <input type="hidden" name="start_y" id="start_y">
+            <input type="hidden" name="end_x" id="end_x">
+            <input type="hidden" name="end_y" id="end_y">
+
+            <button type="submit" class="btn btn-primary" id="confirmBtn" disabled>CONFIRM MISSION COORDINATES</button>
+            <a href="{% url 'Optimize' %}" class="btn" style="background:#555;">CANCEL</a>
+        </form>
+    </div>
+
+    <script>
+        const imgContainer = document.getElementById('image-container');
+        const img = document.getElementById('mission-image');
+        const statusText = document.getElementById('status-text');
+        const confirmBtn = document.getElementById('confirmBtn');
+
+        let startPoint = null;
+        let endPoint = null;
+
+        imgContainer.addEventListener('click', function (e) {
+            const rect = img.getBoundingClientRect();
+            const x = Math.round(e.clientX - rect.left);
+            const y = Math.round(e.clientY - rect.top);
+
+            // Validation: Ensure click is within bounds
+            if (x < 0 || y < 0 || x > rect.width || y > rect.height) return;
+
+            if (!startPoint) {
+                // Set Start
+                startPoint = { x: x, y: y };
+                addMarker(x, y, 'marker-start');
+                document.getElementById('start_x').value = x;
+                document.getElementById('start_y').value = y;
+                statusText.innerText = "Start Point Set. Now select Objective Point (End).";
+                statusText.style.color = "#ffff00";
+            } else if (!endPoint) {
+                // Set End
+                endPoint = { x: x, y: y };
+                addMarker(x, y, 'marker-end');
+                document.getElementById('end_x').value = x;
+                document.getElementById('end_y').value = y;
+                statusText.innerText = "Coordinates Locked. Confirm Mission.";
+                statusText.style.color = "#00ff00";
+                confirmBtn.disabled = false;
+                confirmBtn.style.opacity = "1";
+            } else {
+                // Reset
+                startPoint = null;
+                endPoint = null;
+                // Remove existing markers
+                document.querySelectorAll('.marker').forEach(el => el.remove());
+                confirmBtn.disabled = true;
+                confirmBtn.style.opacity = "0.5";
+
+                // Restart with this click as Start
+                startPoint = { x: x, y: y };
+                addMarker(x, y, 'marker-start');
+                document.getElementById('start_x').value = x;
+                document.getElementById('start_y').value = y;
+                statusText.innerText = "Start Point Reset. Now select Objective Point (End).";
+                statusText.style.color = "#ffff00";
+            }
+        });
+
+        function addMarker(x, y, className) {
+            const marker = document.createElement('div');
+            marker.className = `marker ${className}`;
+            marker.style.left = x + 'px';
+            marker.style.top = y + 'px';
+            imgContainer.appendChild(marker);
+        }
+    </script>
+
+</body>
+
+</html>

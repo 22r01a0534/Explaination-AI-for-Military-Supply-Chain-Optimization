@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Literature Survey - Supply Chain</title>
+    <link href="{% static 'default.css' %}?v=3.2" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .literature-container {
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            text-align: center;
+            color: var(--warning);
+            /* Yellowish gold to match 'LITERATURE SURVEY' title in image roughly, or just accent */
+            color: #C0CA33;
+            /* Trying to match the greenish yellow in the image */
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Table Styles overriding or extending history-table */
+        .lit-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Roboto', sans-serif;
+            color: #ddd;
+        }
+
+        .lit-table thead {
+            background-color: #0d47a1;
+            /* Dark Blue from image header */
+            background-image: linear-gradient(to right, #1565c0, #0d47a1);
+            color: white;
+        }
+
+        .lit-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .lit-table td {
+            padding: 12px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            vertical-align: top;
+        }
+
+        .lit-table tbody tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .lit-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo"><span style="color:var(--accent-color)">MILITARY</span> LOGISTICS</div>
+            <ul class="nav-links">
+                <li><a href="{% url 'index' %}">Tactical Dashboard</a></li>
+                <li><a href="{% url 'Optimize' %}">New Mission</a></li>
+                <li><a href="{% url 'history' %}">History</a></li>
+                <li><a href="{% url 'literature' %}" class="active">Literature Survey</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-container dashboard">
+        <div class="literature-container">
+            <h1 class="page-title">Literature Survey</h1>
+
+            <div style="overflow-x: auto;">
+                <table class="lit-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">S.No</th>
+                            <th style="width: 150px;">Author Name</th>
+                            <th style="width: 80px;">Year</th>
+                            <th style="width: 200px;">Models Used</th>
+                            <th>Limitations / Gaps</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Sharma et al.</td>
+                            <td>2021</td>
+                            <td>Random Forest + Gradient Boosting</td>
+                            <td>Used only rainfall and temperature; ignored soil quality, fertilizer access, and land
+                                degradation factors. No user interface for real-time prediction.</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Zhang et al.</td>
+                            <td>2021</td>
+                            <td>Random Forest + Gradient Boosting</td>
+                            <td>Did not include irrigation level as a parameter. Poor performance in semi-arid regions.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Mehta et al.</td>
+                            <td>2022</td>
+                            <td>Random Forest + Gradient Boosting</td>
+                            <td>Ignored water availability index, leading to unrealistic suitability predictions.</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Khan et al.</td>
+                            <td>2022</td>
+                            <td>Random Forest + Gradient Boosting</td>
+                            <td>Did not consider fertilizer access or soil fertility variations.</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Ali et al.</td>
+                            <td>2023</td>
+                            <td>Random Forest + Gradient Boosting</td>
+                            <td>Weak generalization across multiple climate zones.</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Silva et al.</td>
+                            <td>2023</td>
+                            <td>Random Forest + Gradient Boosting</td>
+                            <td>No climate risk index or vulnerability assessment.</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Park et al.</td>
+                            <td>2024</td>
+                            <td>Random Forest + Gradient Boosting</td>
+                            <td>High computational complexity and slow prediction time.</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Wang et al.</td>
+                            <td>2024</td>
+                            <td>Random Forest + Gradient Boosting</td>
+                            <td>Did not support multi-parameter environmental input systems.</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>Kapoor et al.</td>
+                            <td>2025</td>
+                            <td>Random Forest + Gradient Boosting</td>
+                            <td>Ignored irrigation and fertilizer factors completely.</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>Lee et al.</td>
+                            <td>2025</td>
+                            <td>Random Forest + Gradient Boosting</td>
+                            <td>Random Forest + Gradient Boosting</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>SECURE TERMINAL • SYSTEM READY</p>
+    </footer>
+
+</body>
+
+</html>

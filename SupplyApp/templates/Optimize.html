@@ -1,0 +1,229 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Chain Optimization</title>
+    <link href="{% static 'default.css' %}?v=3.2" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #121212;
+            /* Fallback */
+            background: linear-gradient(135deg, #0f1115 0%, #181b21 100%);
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Inline overrides to ensure basic structure works even if CSS lags */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar {
+            background-color: #1f1f1f;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            padding: 0;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #b0b0b0;
+            font-weight: 500;
+        }
+
+        .main-container {
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            flex-grow: 1;
+        }
+
+        .mission-card {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+
+        select.form-control {
+            width: 100%;
+            padding: 14px;
+            background: #252525;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select.form-control:focus {
+            border-color: #3f51b5;
+        }
+
+        option {
+            background: #1e1e1e;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <span style="color:var(--accent-color)">MILITARY</span> LOGISTICS
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'index' %}">Dashboard</a></li>
+                <li><a href="{% url 'Optimize' %}" class="active">New Mission</a></li>
+                <li><a href="{% url 'history' %}">History</a></li>
+                <li><a href="{% url 'literature' %}">Literature Survey</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-container">
+
+        <div class="card mission-card">
+            <div class="card-header">
+                <h2>Initialize Optimisation Mission</h2>
+                <p>Configure mission parameters and upload terrain surveillance imagery.</p>
+            </div>
+
+            <div class="card-body">
+                {% if data %}
+                <div class="alert {{ status_class }}">
+                    {{ data|safe }}
+                </div>
+                {% endif %}
+
+                <form id="uploadForm" method="post" action="{% url 'OptimizeAction' %}" enctype="multipart/form-data"
+                    onsubmit="return validateForm()">
+                    {% csrf_token %}
+
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label for="missionType"><strong>Mission Profile:</strong></label>
+                        <select name="mission_type" id="missionType" class="form-control">
+                            <option value="standard">Standard Logistics (Balanced)</option>
+                            <option value="stealth">Stealth / Recon (Avoid Urban/Roads)</option>
+                            <option value="heavy_transport">Heavy Transport (Avoid Soft Ground)</option>
+                            <option value="speed">Emergency Response (Max Speed)</option>
+                        </select>
+                        <small style="color:#aaa;">* Affects route cost calculation logic.</small>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label for="rankSelect"><strong>Commander Rank:</strong></label>
+                        <select name="rank" id="rankSelect" class="form-control" style="margin-bottom: 1rem;">
+                            <option value="Recruit">Recruit</option>
+                            <option value="Sepoy / Private">Sepoy / Private</option>
+                            <option value="Lance Naik / Lance Corporal">Lance Naik / Lance Corporal</option>
+                            <option value="Naik / Corporal">Naik / Corporal</option>
+                            <option value="Havildar / Sergeant">Havildar / Sergeant</option>
+                            <option value="Naib Subedar">Naib Subedar</option>
+                            <option value="Subedar">Subedar</option>
+                            <option value="Subedar Major">Subedar Major</option>
+                            <option value="Lieutenant">Lieutenant</option>
+                            <option value="Captain">Captain</option>
+                            <option value="Major">Major</option>
+                            <option value="Lieutenant Colonel">Lieutenant Colonel</option>
+                            <option value="Colonel">Colonel</option>
+                            <option value="Brigadier">Brigadier</option>
+                            <option value="Major General">Major General</option>
+                            <option value="Lieutenant General">Lieutenant General</option>
+                            <option value="General">General</option>
+                        </select>
+
+                        <label for="personnelName"><strong>Commander Name:</strong></label>
+                        <input type="text" name="personnel_name" id="personnelName" class="form-control"
+                            placeholder="e.g. John Doe"
+                            style="width: 100%; padding: 14px; background: #252525; border: 1px solid #333; color: white; border-radius: 6px; font-size: 1rem; outline: none;">
+                    </div>
+
+                    <div class="file-upload-wrapper">
+                        <input type="file" name="t1" id="fileInput" class="file-upload-input" accept="image/*">
+                        <div class="file-upload-box">
+                            <p>Drag & Drop SAR Image or <span>Browse</span></p>
+                        </div>
+                        <div id="fileName" class="file-name"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-large" id="submitBtn">
+                            EXECUTE ANALYSIS
+                        </button>
+                    </div>
+
+                    <div id="loading" class="loading-spinner" style="display:none;">
+                        <div class="spinner"></div>
+                        <h3>Processing Intelligence...</h3>
+                        <p>Segmenting Terrain • Classifying Threats • calculating Optimal Path</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Defense Advanced Research Projects. System v2.0</p>
+    </footer>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('fileName');
+        const form = document.getElementById('uploadForm');
+        const loading = document.getElementById('loading');
+        const submitBtn = document.getElementById('submitBtn');
+
+        fileInput.addEventListener('change', function (e) {
+            if (this.files && this.files[0]) {
+                fileNameDisplay.textContent = "Selected Intel: " + this.files[0].name;
+                fileNameDisplay.style.display = 'block';
+            }
+        });
+
+        function validateForm() {
+            if (fileInput.files.length === 0) {
+                alert("Alert: No SAR Imagery Selected.");
+                return false;
+            }
+
+            // Show loading
+            loading.style.display = 'flex';
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.5';
+            submitBtn.innerText = 'CALCULATING...';
+            return true;
+        }
+    </script>
+</body>
+
+</html>
